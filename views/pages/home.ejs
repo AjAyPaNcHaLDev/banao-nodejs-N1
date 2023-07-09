@@ -367,7 +367,7 @@
             token: localStorage.getItem("token"),
           };
           axios
-            .post(`http://localhost:3002/posts/new`, data)
+            .post(`/posts/new`, data)
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);
@@ -386,7 +386,7 @@
           const Post = form.elements.Post;
 
           axios
-            .post(`http://localhost:3002/posts/${Post.value}/comments`, {
+            .post(`/posts/${Post.value}/comments`, {
               text: textComment.value,
             })
             .then(function (response) {
@@ -417,7 +417,7 @@
             token: localStorage.getItem("token"),
           };
           axios
-            .post(`http://localhost:3002/posts/update`, data)
+            .post(`/posts/update`, data)
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);
@@ -437,7 +437,7 @@
           }
 
           axios
-            .post(`http://localhost:3002/posts/delete/${deletePost}`)
+            .post(`/posts/delete/${deletePost}`)
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);
@@ -451,7 +451,7 @@
         function likeHandler(e) {
           const postId = e.value;
           axios
-            .post(`http://localhost:3002/posts/${postId}/likes/`)
+            .post(`/posts/${postId}/likes/`)
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);

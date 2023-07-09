@@ -136,9 +136,7 @@
         }
 
         await axios
-          .get(
-            `http://localhost:3002/api/login?Email=${loginUsername}&Password=${loginPassword}`
-          )
+          .get(`/api/login?Email=${loginUsername}&Password=${loginPassword}`)
           .then(function (response) {
             const { token } = response.data;
             localStorage.setItem("token", token);
@@ -168,7 +166,7 @@
 
         axios
           .get(
-            `http://localhost:3002/api/register?Name=${registerName}&Email=${registerEmail}&Username=${registerUsername}&Password=${registerPassword}`
+            `/api/register?Name=${registerName}&Email=${registerEmail}&Username=${registerUsername}&Password=${registerPassword}`
           )
           .then(function (response) {
             alert(JSON.stringify(response.data.Msg));
