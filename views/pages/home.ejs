@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome :<span class="title"></span></title>
+    <link href="/assests/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="/assests/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <center>
+        <img src="./assests/logo.jpg" height="50" style="margin: 20px" />
+      </center>
+      <!-- Content here -->
+      <h3>
+        Hi!,Welcome
+        <small class="text-body-secondary"
+          ><span class="user-name"><%=user.Name%></span></small
+        >
+      </h3>
+
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+          justify-content: center;
+        "
+      >
+        <div class="card" style="width: 18rem; max-height: 230px; margin: 20px">
+          <div class="card-body">
+            <h5 class="card-title user-name"><%=user.Name%></h5>
+            <hr />
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              Username:
+              <span class="user-username"><%=user.Username%></span>
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              Email:
+              <span class="user-username"><%=user.Email%></span>
+            </h6>
+            <p class="card-text">
+              This is the the user details currently logined.
+            </p>
+            <a href="/logout" class="card-link">Logout</a>
+          </div>
+        </div>
+        <div class="card" style="width: 28rem; margin: 20px">
+          <div class="card-body">
+            <h5 class="card-title">Add new Post</h5>
+            <hr />
+            <form onsubmit="postSubmitHandler(event)">
+              <div class="mb-3">
+                <label class="form-label">Enter Title</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon3"
+                    >Your Title</span
+                  >
+                  <input
+                    type="text"
+                    name="postTitle"
+                    onchange="changeHandler(this)"
+                    class="form-control"
+                    id="basic-url"
+                    aria-describedby="basic-addon3 basic-addon4"
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Enter Content</label>
+                <div class="input-group">
+                  <textarea
+                    class="form-control"
+                    aria-label="With textarea"
+                    style="margin: 10px"
+                    onchange="changeHandler(this)"
+                    name="postContent"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary" type="submit">Posts</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card" style="width: 28rem; margin: 20px">
+          <div class="card-body">
+            <h5 class="card-title">Update Post</h5>
+            <hr />
+            <form onsubmit="postUpdateHandler(event)">
+              <div class="mb-3">
+                <label class="form-label">Select Post</label>
+                <select
+                  class="form-select form-select-lg mb-3"
+                  name="updateId"
+                  onchange="changeHandler(this)"
+                  aria-label=".form-select-lg example"
+                >
+                  <option selected disabled>Open this select menu</option>
+                  <% myposts.forEach(function(post){%>
+                  <option value="<%=post._id%>"><%=post.title%></option>
+                  <%})%>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Enter Title</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon3"
+                    >Your Title</span
+                  >
+                  <input
+                    type="text"
+                    name="updatePostTitle"
+                    onchange="changeHandler(this)"
+                    class="form-control"
+                    id="basic-url"
+                    aria-describedby="basic-addon3 basic-addon4"
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Enter Content</label>
+                <div class="input-group">
+                  <textarea
+                    class="form-control"
+                    aria-label="With textarea"
+                    style="margin: 10px"
+                    onchange="changeHandler(this)"
+                    name="updatePostContent"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary" type="submit">
+                  Update Post
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card" style="width: 28rem; max-height: 240px; margin: 20px">
+          <div class="card-body">
+            <h5 class="card-title btn-danger">Delete Post</h5>
+            <hr />
+            <form onsubmit="deletePostHandler(event)">
+              <div class="mb-3">
+                <label class="form-label">Select Post</label>
+                <select
+                  class="form-select form-select-lg mb-3"
+                  name="deletePost"
+                  onchange="changeHandler(this)"
+                  aria-label=".form-select-lg example"
+                >
+                  <option selected disabled>Open this select menu</option>
+                  <% myposts.forEach(function(post){%>
+                  <option value="<%=post._id%>"><%=post.title%></option>
+                  <%})%>
+                </select>
+              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-danger" type="submit">
+                  Delete Post
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fulid" style="margin: 40px; margin-bottom: 100px">
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+            >
+              My Posts
+            </button>
+          </h2>
+          <div
+            id="collapseOne"
+            class="accordion-collapse collapse show"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <div
+                class="container"
+                style="display: flex; flex-wrap: wrap; gap: 10px"
+              >
+                <% myposts.forEach(function(post){%>
+                <div class="card mt-4" style="width: 30rem">
+                  <div class="card-body">
+                    <h6 class="card-title">Title: <%=post.title%></h6>
+                    <small class="card-title"
+                      >Username: <%=post.Username%></small
+                    >
+                    <p class="card-text">Content :<%=post.content%></p>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      id="likeBtn"
+                      value="<%=post._id%>"
+                      onclick="likeHandler(this)"
+                    >
+                      <%=post.likes.length%> Likes
+                    </button>
+                    <div class="mt-3">
+                      <h6>Comments</h6>
+                      <ul
+                        class="list-group"
+                        id="commentsList"
+                        style="
+                          margin: 10px;
+                          padding: 5px;
+                          max-height: 200px;
+                          overflow: scroll;
+                        "
+                      >
+                        <%post.comments.forEach(function(comment){%>
+                        <li><b><%=comment.author%> </b> <%=comment.text%></li>
+                        <%})%>
+                      </ul>
+                      <form onsubmit="addCommentHandler(event)">
+                        <input
+                          type="text"
+                          name="textComment"
+                          placeholder="Type Comments"
+                          style="width: 60%"
+                        />
+                        <button
+                          class="btn btn-primary btn-sm"
+                          value="<%=post._id%>"
+                          type="submit"
+                          name="Post"
+                          value="<%=post._id%>"
+                          onclick="likeHandler(this)"
+                          id="likeBtn"
+                        >
+                          Post Comment
+                        </button>
+                      </form>
+                    </div>
+
+                    <span style="float: right"><b>Id: </b><%=post._id%></span>
+                  </div>
+                </div>
+
+                <% })%>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="true"
+              aria-controls="collapseTwo"
+            >
+              All Users Posts
+            </button>
+          </h2>
+          <div
+            id="collapseTwo"
+            class="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <div
+                class="container"
+                style="display: flex; flex-wrap: wrap; gap: 10px"
+              >
+                <% posts.forEach(function(post){%>
+                <div class="card mt-4" style="width: 30rem">
+                  <div class="card-body">
+                    <h6 class="card-title">Title: <%=post.title%></h6>
+                    <small class="card-title"
+                      >Username: <%=post.Username%></small
+                    >
+                    <p class="card-text">Content :<%=post.content%></p>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      id="likeBtn"
+                      value="<%=post._id%>"
+                      onclick="likeHandler(this)"
+                    >
+                      <%=post.likes.length%> Likes
+                    </button>
+                    <div class="mt-3">
+                      <h6>Comments</h6>
+                      <ul
+                        class="list-group"
+                        id="commentsList"
+                        style="
+                          margin: 10px;
+                          padding: 5px;
+                          max-height: 200px;
+                          overflow: scroll;
+                        "
+                      >
+                        <%post.comments.forEach(function(comment){%>
+                        <li>
+                          <b><%=comment.author%> say</b> <%=comment.text%>
+                        </li>
+                        <%})%>
+                      </ul>
+                      <form onsubmit="addCommentHandler(event)">
+                        <input
+                          type="text"
+                          name="textComment"
+                          placeholder="Type Comments"
+                          style="width: 60%"
+                        />
+                        <button
+                          class="btn btn-primary btn-sm"
+                          value="<%=post._id%>"
+                          type="submit"
+                          name="Post"
+                          id="likeBtn"
+                        >
+                          Post Comment
+                        </button>
+                      </form>
+                    </div>
+
+                    <span style="float: right"><b>Id: </b><%=post._id%></span>
+                  </div>
+                </div>
+
+                <% })%>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <script>
+        const form = {};
+        function changeHandler(e) {
+          const name = e.name;
+          const value = e.value;
+          form[name] = value;
+          console.log(form);
+        }
+
+        function postSubmitHandler(e) {
+          e.preventDefault();
+          const { postTitle = "", postContent = "" } = form;
+          if (!postTitle || !postContent) {
+            alert("Please enter Title or Content");
+            return;
+          }
+          const data = {
+            title: postTitle,
+            content: postContent,
+            token: localStorage.getItem("token"),
+          };
+          axios
+            .post(`http://localhost:3002/posts/new`, data)
+            .then(function (response) {
+              const { Msg } = response.data;
+              alert(Msg);
+              location.reload(true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+
+        function addCommentHandler(e) {
+          e.preventDefault();
+
+          const form = e.target;
+          const textComment = form.elements.textComment;
+          const Post = form.elements.Post;
+
+          axios
+            .post(`http://localhost:3002/posts/${Post.value}/comments`, {
+              text: textComment.value,
+            })
+            .then(function (response) {
+              location.reload(true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+
+        function postUpdateHandler(e) {
+          e.preventDefault();
+          const {
+            updateId = "",
+            updatePostTitle = "",
+            updatePostContent = "",
+          } = form;
+          if (!updateId || !updatePostTitle || !updatePostContent) {
+            alert(
+              "Please enter Title , Content and select post which you went to update"
+            );
+            return;
+          }
+          const data = {
+            title: updatePostTitle,
+            content: updatePostContent,
+            updateId,
+            token: localStorage.getItem("token"),
+          };
+          axios
+            .post(`http://localhost:3002/posts/update`, data)
+            .then(function (response) {
+              const { Msg } = response.data;
+              alert(Msg);
+              location.reload(true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+
+        function deletePostHandler(e) {
+          e.preventDefault();
+          const { deletePost = "" } = form;
+          if (!deletePost) {
+            alert("Please select Post for delete");
+            return;
+          }
+
+          axios
+            .post(`http://localhost:3002/posts/delete/${deletePost}`)
+            .then(function (response) {
+              const { Msg } = response.data;
+              alert(Msg);
+              location.reload(true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+
+        function likeHandler(e) {
+          const postId = e.value;
+          axios
+            .post(`http://localhost:3002/posts/${postId}/likes/`)
+            .then(function (response) {
+              const { Msg } = response.data;
+              alert(Msg);
+              location.reload(true);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      </script>
+    </footer>
+  </body>
+</html>

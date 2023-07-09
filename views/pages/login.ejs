@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="./assests/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="./assests/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+
+  <script></script>
+  <body>
+    <div class="container" style="width: 400px; margin-top: 10%">
+      <center><img src="./assests/logo.jpg" height="50" /></center>
+      <hr />
+      <form onsubmit="loginSubmitHandler(event)" style="padding: 10px">
+        <div>
+          <h4>
+            <center><b> Login</b></center>
+          </h4>
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">@</span>
+          <input
+            type="text"
+            name="loginUsername"
+            placeholder="Enter username"
+            onchange="changeHandler(this)"
+            class="form-control"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Password</span>
+          <input
+            type="password"
+            name="loginPassword"
+            placeholder="Enter Password"
+            onchange="changeHandler(this)"
+            class="form-control"
+            aria-label="password"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+      </form>
+      <hr />
+    </div>
+    <div class="container" style="width: 400px; margin-top: 10%">
+      <center><img src="./assests/logo.jpg" height="50" /></center>
+      <hr />
+      <form onsubmit="registerSubmitHandler(event)" style="padding: 10px">
+        <div>
+          <h4>
+            <center><b> Register</b></center>
+          </h4>
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Name</span>
+          <input
+            type="text"
+            name="registerName"
+            placeholder="Enter username"
+            onchange="changeHandler(this)"
+            class="form-control"
+            aria-label="Name"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Username</span>
+          <input
+            type="text"
+            name="registerUsername"
+            placeholder="Enter username"
+            onchange="changeHandler(this)"
+            class="form-control"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">@</span>
+          <input
+            type="text"
+            name="registerEmail"
+            placeholder="Enter Email"
+            onchange="changeHandler(this)"
+            class="form-control"
+            placeholder="Enter Email"
+            aria-label="Email"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Password</span>
+          <input
+            type="password"
+            name="registerPassword"
+            placeholder="Enter Password"
+            onchange="changeHandler(this)"
+            class="form-control"
+            placeholder="password"
+            aria-label="password"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button class="btn btn-primary" type="submit">Register</button>
+        </div>
+      </form>
+      <hr />
+    </div>
+  </body>
+  <footer>
+    <script>
+      const form = {};
+      function changeHandler(e) {
+        const name = e.name;
+        const value = e.value;
+        form[name] = value;
+        console.log(form);
+      }
+      async function loginSubmitHandler(e) {
+        e.preventDefault();
+        const { loginUsername = "", loginPassword = "" } = form;
+        if (!loginUsername || !loginPassword) {
+          alert("Please enter username or password");
+          return;
+        }
+
+        await axios
+          .get(
+            `http://localhost:3002/api/login?Email=${loginUsername}&Password=${loginPassword}`
+          )
+          .then(function (response) {
+            const { token } = response.data;
+            localStorage.setItem("token", token);
+            window.location = "/home";
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      function registerSubmitHandler(e) {
+        e.preventDefault();
+        const {
+          registerUsername = "",
+          registerPassword = "",
+          registerName = "",
+          registerEmail = "",
+        } = form;
+        if (
+          !registerUsername &&
+          !registerPassword &&
+          !registerEmail &&
+          !registerName
+        ) {
+          alert("Please enter name,username ,email or password");
+          return;
+        }
+
+        axios
+          .get(
+            `http://localhost:3002/api/register?Name=${registerName}&Email=${registerEmail}&Username=${registerUsername}&Password=${registerPassword}`
+          )
+          .then(function (response) {
+            alert(JSON.stringify(response.data.Msg));
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    </script>
+  </footer>
+</html>
