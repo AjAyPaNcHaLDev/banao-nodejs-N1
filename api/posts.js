@@ -6,12 +6,23 @@ const Post = require("../db//PostSchema");
 const jwt = require("jsonwebtoken");
 const Const = require("../constant");
 
+// this is the middleware apply to check jwt token is valid or not
 const middleware = async (req, res, next) => {
-  console.log("middleware checking...");
+  const { token } = req.body;
+  try {
+    data = jwt.verify(token, Const.jwtKey);
+    if (!data) {
+      res.send({ Msg: "Your token is invalid Please try relogin." });
+      return;
+    }
+  } catch (e) {
+    res.send({ Msg: e.message });
+    return;
+  }
   next();
 };
 
-router.post("/posts/new", async (req, res) => {
+router.post("/posts/new", middleware, async (req, res) => {
   try {
     const { title, content, token = "" } = req.body;
     const { user = { session: false } } = req.session;
@@ -29,9 +40,11 @@ router.post("/posts/new", async (req, res) => {
   }
 });
 
-router.post("/posts/update", async (req, res) => {
+router.post("/posts/update", middleware, async (req, res) => {
   try {
     const { title, content, updateId, token = "" } = req.body;
+
+    let { _id = "", Username } = jwt.verify(token, Const.jwtKey);
 
     try {
       const post = await Post.findById(updateId);
@@ -40,7 +53,11 @@ router.post("/posts/update", async (req, res) => {
         // If the post is not found, handle the error
         return res.status(404).send({ Msg: "Your Post Not Found" });
       }
-
+      if (_id !== post.userId) {
+        return res
+          .status(200)
+          .send({ Msg: "Your Can not update this post without valid token " });
+      }
       // Update the post with the new data
       post.title = title;
       post.content = content;
@@ -60,7 +77,7 @@ router.post("/posts/update", async (req, res) => {
   }
 });
 
-router.post("/posts/delete/:id", async (req, res) => {
+router.post("/posts/delete/:id", middleware, async (req, res) => {
   try {
     const postId = req.params.id;
     const deletedPost = await Post.findByIdAndDelete(postId);
@@ -108,7 +125,7 @@ router.post("/posts/:postId/comments", async (req, res) => {
   }
 });
 
-router.post("/posts/:postId/likes", async (req, res) => {
+router.post("/posts/:postId/likes", middleware, async (req, res) => {
   try {
     const { postId } = req.params;
     const { Username = "" } = req.session.user;
@@ -137,7 +154,7 @@ router.post("/posts/:postId/likes", async (req, res) => {
   }
 });
 
-router.post("/posts/:postId/likes/:likeId", async (req, res) => {
+router.post("/posts/:postId/likes/:likeId", middleware, async (req, res) => {
   const { postId, likeId } = req.params;
   const { isLike, author } = req.body;
 

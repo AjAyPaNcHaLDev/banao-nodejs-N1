@@ -32,7 +32,6 @@ app.use(require("./api/forgot-pssword"));
 app.use(require("./api/api"));
 app.use(require("./api/posts"));
 const conn = require("./db/conn");
-const { post } = require("./api/register");
 require("dotenv").config();
 const PORT = process.env.PORT || Const.port;
 

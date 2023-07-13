@@ -387,6 +387,7 @@
           axios
             .post(`/posts/${Post.value}/comments`, {
               text: textComment.value,
+              token: localStorage.getItem("token"),
             })
             .then(function (response) {
               location.reload(true);
@@ -436,7 +437,9 @@
           }
 
           axios
-            .post(`/posts/delete/${deletePost}`)
+            .post(`/posts/delete/${deletePost}`, {
+              token: localStorage.getItem("token"),
+            })
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);
@@ -450,7 +453,9 @@
         function likeHandler(e) {
           const postId = e.value;
           axios
-            .post(`/posts/${postId}/likes/`)
+            .post(`/posts/${postId}/likes/`, {
+              token: localStorage.getItem("token"),
+            })
             .then(function (response) {
               const { Msg } = response.data;
               alert(Msg);

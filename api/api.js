@@ -4,11 +4,49 @@ const mongoose = require("mongoose");
 const User = require("../db/UserSchema");
 const jwt = require("jsonwebtoken");
 const Const = require("../constant");
-
+const encrypte = require("../encrypte");
 router.get("/api/users", (req, res) => {
   User.find()
     .select("-Password") //protecting password ensure  not showing in api
     .then((result) => {
+      if (!result) {
+        res.send([]);
+        return;
+      }
+      result = result.map((user) => {
+        let { Name, Username, Email, _id } = user;
+
+        Username = encrypte.decryptData(
+          Username,
+          Const.encryptionKey,
+          encrypte.initializationVector
+        );
+        Email = encrypte.decryptData(
+          Email,
+          Const.encryptionKey,
+          encrypte.initializationVector
+        );
+        Name = encrypte.decryptData(
+          Name,
+          Const.encryptionKey,
+          encrypte.initializationVector
+        );
+
+        return { Name, Username, Email, _id };
+      });
+      res.send(result);
+    })
+    .catch((err) => res.send({ Msg: err }));
+});
+router.get("/api/users/encrypte", (req, res) => {
+  User.find()
+    .select("-Password") //protecting password ensure  not showing in api
+    .then((result) => {
+      if (!result) {
+        res.send([]);
+        return;
+      }
+
       res.send(result);
     })
     .catch((err) => res.send({ Msg: err }));
@@ -25,7 +63,14 @@ router.get("/token/:token", (req, res) => {
 });
 
 router.get("/api/users/:user", (req, res) => {
-  const { user } = req.params;
+  let { user } = req.params;
+
+  user = encrypte.encryptData(
+    user,
+    Const.encryptionKey,
+    encrypte.initializationVector
+  );
+
   User.findOne({
     $or: [
       { Email: user },
@@ -39,7 +84,24 @@ router.get("/api/users/:user", (req, res) => {
         res.send({ Msg: "Please Provide Valid any from Email,Username or id" });
         return;
       }
-      res.send(result);
+
+      let { Username, Email, Name, _id } = result;
+      Username = encrypte.decryptData(
+        Username,
+        Const.encryptionKey,
+        encrypte.initializationVector
+      );
+      Email = encrypte.decryptData(
+        Email,
+        Const.encryptionKey,
+        encrypte.initializationVector
+      );
+      Name = encrypte.decryptData(
+        Name,
+        Const.encryptionKey,
+        encrypte.initializationVector
+      );
+      res.send({ Username, Email, Name, _id });
     })
     .catch((err) => res.send({ Msg: err }));
 });

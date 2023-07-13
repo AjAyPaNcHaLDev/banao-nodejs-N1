@@ -138,9 +138,15 @@
         await axios
           .get(`/api/login?Email=${loginUsername}&Password=${loginPassword}`)
           .then(function (response) {
-            const { token } = response.data;
-            localStorage.setItem("token", token);
-            window.location = "/home";
+            const { token, Msg = "" } = response.data;
+
+            if (Msg) {
+              alert(Msg);
+            }
+            if (token) {
+              localStorage.setItem("token", token);
+              window.location = "/home";
+            }
           })
           .catch(function (error) {
             console.log(error);
